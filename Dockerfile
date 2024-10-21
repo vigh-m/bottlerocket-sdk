@@ -542,7 +542,7 @@ ENV CGO_LDFLAGS="${LDFLAGS}"
 
 ENV GO111MODULE="auto"
 
-ENV AWS_LC_FIPS_VER="2.0.9"
+ENV AWS_LC_FIPS_VER="2.0.17"
 
 USER root
 RUN dnf -y install golang
