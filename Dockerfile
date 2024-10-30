@@ -1217,10 +1217,11 @@ COPY --from=sdk-plus-lz4 /usr/share/licenses/lz4 /usr/share/licenses/lz4
 # a format that's convenient for extracting later.
 COPY --from=toolchain-archive /toolchain /toolchain
 
-# "sdk-libc-musl" has the musl C library and headers. We omit "sdk-libc-gnu"
-# because we expect to build glibc again for the target OS, while we will use
-# the musl artifacts directly to generate static binaries such as migrations.
+# "sdk-libc-musl" has the MUSL C library and headers.
 COPY --from=sdk-libc-musl / /
+
+# "sdk-libc-gnu" has the GNU C library and headers.
+COPY --from=sdk-libc-gnu / /
 
 # "sdk-rust" has our Rust toolchain with the required targets.
 COPY --chown=0:0 --from=sdk-rust /usr/libexec/rust/ /usr/libexec/rust/
