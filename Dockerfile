@@ -83,8 +83,8 @@ RUN \
   git config --global user.email "builder@localhost"
 
 ARG UPSTREAM_SOURCE_FALLBACK
-ENV BRVER="2022.11.1"
-ENV KVER="5.10.162"
+ENV BRVER="2024.02.8"
+ENV KVER="5.10.228"
 
 WORKDIR /home/builder
 COPY ./hashes/buildroot ./hashes
@@ -134,7 +134,7 @@ FROM base as sdk
 USER root
 
 ARG UPSTREAM_SOURCE_FALLBACK
-ENV KVER="5.10.162"
+ENV KVER="5.10.228"
 
 WORKDIR /
 
@@ -184,8 +184,8 @@ WORKDIR /home/builder
 COPY ./hashes/glibc ./hashes
 COPY ./helpers/glibc/* ./
 
-ENV GLIBCVER="2.37"
-ENV KVER="5.10.162"
+ENV GLIBCVER="2.38"
+ENV KVER="5.10.228"
 RUN \
   sdk-fetch hashes && \
   tar xf glibc-${GLIBCVER}.tar.xz && \
@@ -215,7 +215,7 @@ WORKDIR /home/builder
 COPY ./hashes/musl ./hashes
 COPY ./helpers/musl/* ./
 
-ENV MUSLVER="1.2.3"
+ENV MUSLVER="1.2.4"
 RUN \
   sdk-fetch hashes && \
   tar xf musl-${MUSLVER}.tar.gz && \
@@ -486,7 +486,7 @@ FROM sdk as sdk-bootconfig
 
 USER root
 
-ENV KVER="5.10.162"
+ENV KVER="5.10.228"
 
 RUN \
   mkdir -p /usr/libexec/tools /usr/share/licenses/bootconfig && \
