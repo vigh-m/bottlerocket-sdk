@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/fedora:39 as base
+FROM public.ecr.aws/docker/library/fedora:40 as base
 
 # Everything we need to build our SDK and packages.
 RUN \
@@ -547,8 +547,8 @@ ENV AWS_LC_FIPS_VER="2.0.17"
 USER root
 RUN dnf -y install golang
 
-ENV GO123VER="1.23.2"
-ENV GO122VER="1.22.8"
+ENV GO123VER="1.23.3"
+ENV GO122VER="1.22.9"
 
 # =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=
 
