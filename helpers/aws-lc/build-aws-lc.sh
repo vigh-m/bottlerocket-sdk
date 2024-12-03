@@ -8,13 +8,14 @@ for opt in "$@"; do
    optarg="$(expr "${opt}" : '[^=]*=\(.*\)')"
    case "${opt}" in
       --arch=*) ARCH="${optarg}" ;;
+      --target=*) TARGET="${optarg}" ;;
       --go-dir=*) GODIR="${optarg}" ;;
    esac
 done
 
 ARCH="${ARCH:?}"
 GODIR="${GODIR:?}"
-TARGET="${ARCH}-bottlerocket-linux-gnu"
+TARGET="${TARGET:?}"
 
 # Some of the AWS-LC sources are built with `-O0`. This is not compatible with
 # `-Wp,-D_FORTIFY_SOURCE=2`, which needs at least `-O2`. Add `-DGOBORING` to

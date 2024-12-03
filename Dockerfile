@@ -598,39 +598,87 @@ COPY ./helpers/aws-lc/* .
 
 # =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=
 
-FROM sdk-go-1.23-prep as sdk-go-1.23-aws-lc-x86_64
+FROM sdk-go-1.23-prep as sdk-go-1.23-aws-lc-gnu-x86_64
 ENV ARCH="x86_64"
-RUN ./build-aws-lc.sh --arch="${ARCH}" --go-dir="${HOME}/sdk-go"
+ENV LIBC="gnu"
+ENV TARGET="${ARCH}-bottlerocket-linux-${LIBC}"
+RUN ./build-aws-lc.sh --arch="${ARCH}" --target="${TARGET}" --go-dir="${HOME}/sdk-go"
 
 # =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=
 
-FROM sdk-go-1.23-prep as sdk-go-1.23-aws-lc-aarch64
+FROM sdk-go-1.23-prep as sdk-go-1.23-aws-lc-gnu-aarch64
 ENV ARCH="aarch64"
-RUN ./build-aws-lc.sh --arch="${ARCH}" --go-dir="${HOME}/sdk-go"
+ENV LIBC="gnu"
+ENV TARGET="${ARCH}-bottlerocket-linux-${LIBC}"
+RUN ./build-aws-lc.sh --arch="${ARCH}" --target="${TARGET}" --go-dir="${HOME}/sdk-go"
 
 # =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=
 
-FROM sdk-go-1.22-prep as sdk-go-1.22-aws-lc-x86_64
+FROM sdk-go-1.23-prep as sdk-go-1.23-aws-lc-musl-x86_64
 ENV ARCH="x86_64"
-RUN ./build-aws-lc.sh --arch="${ARCH}" --go-dir="${HOME}/sdk-go"
+ENV LIBC="musl"
+ENV TARGET="${ARCH}-bottlerocket-linux-${LIBC}"
+RUN ./build-aws-lc.sh --arch="${ARCH}" --target="${TARGET}" --go-dir="${HOME}/sdk-go"
 
 # =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=
 
-FROM sdk-go-1.22-prep as sdk-go-1.22-aws-lc-aarch64
+FROM sdk-go-1.23-prep as sdk-go-1.23-aws-lc-musl-aarch64
 ENV ARCH="aarch64"
-RUN ./build-aws-lc.sh --arch="${ARCH}" --go-dir="${HOME}/sdk-go"
+ENV LIBC="musl"
+ENV TARGET="${ARCH}-bottlerocket-linux-${LIBC}"
+RUN ./build-aws-lc.sh --arch="${ARCH}" --target="${TARGET}" --go-dir="${HOME}/sdk-go"
+
+# =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=
+
+FROM sdk-go-1.22-prep as sdk-go-1.22-aws-lc-gnu-x86_64
+ENV ARCH="x86_64"
+ENV LIBC="gnu"
+ENV TARGET="${ARCH}-bottlerocket-linux-${LIBC}"
+RUN ./build-aws-lc.sh --arch="${ARCH}" --target="${TARGET}" --go-dir="${HOME}/sdk-go"
+
+# =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=
+
+FROM sdk-go-1.22-prep as sdk-go-1.22-aws-lc-gnu-aarch64
+ENV ARCH="aarch64"
+ENV LIBC="gnu"
+ENV TARGET="${ARCH}-bottlerocket-linux-${LIBC}"
+RUN ./build-aws-lc.sh --arch="${ARCH}" --target="${TARGET}" --go-dir="${HOME}/sdk-go"
+
+# =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=
+
+FROM sdk-go-1.22-prep as sdk-go-1.22-aws-lc-musl-x86_64
+ENV ARCH="x86_64"
+ENV LIBC="musl"
+ENV TARGET="${ARCH}-bottlerocket-linux-${LIBC}"
+RUN ./build-aws-lc.sh --arch="${ARCH}" --target="${TARGET}" --go-dir="${HOME}/sdk-go"
+
+# =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=
+
+FROM sdk-go-1.22-prep as sdk-go-1.22-aws-lc-musl-aarch64
+ENV ARCH="aarch64"
+ENV LIBC="musl"
+ENV TARGET="${ARCH}-bottlerocket-linux-${LIBC}"
+RUN ./build-aws-lc.sh --arch="${ARCH}" --target="${TARGET}" --go-dir="${HOME}/sdk-go"
 
 # =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=   =^..^=
 
 FROM sdk-go-1.23-prep as sdk-go-1.23
 
-COPY --from=sdk-go-1.23-aws-lc-x86_64 \
+COPY --from=sdk-go-1.23-aws-lc-gnu-x86_64 \
   /home/builder/aws-lc/build/goboringcrypto_linux_amd64.syso \
   /home/builder/sdk-go/src/crypto/internal/boring/syso/goboringcrypto_linux_amd64.syso
 
-COPY --from=sdk-go-1.23-aws-lc-aarch64 \
+COPY --from=sdk-go-1.23-aws-lc-gnu-aarch64 \
   /home/builder/aws-lc/build/goboringcrypto_linux_arm64.syso \
   /home/builder/sdk-go/src/crypto/internal/boring/syso/goboringcrypto_linux_arm64.syso
+
+COPY --from=sdk-go-1.23-aws-lc-musl-x86_64 \
+  /home/builder/aws-lc/build/goboringcrypto_linux_amd64.syso \
+  /home/builder/sdk-go/src/crypto/internal/boring/syso/goboringcrypto_linux_musl_amd64.syso
+
+COPY --from=sdk-go-1.23-aws-lc-musl-aarch64 \
+  /home/builder/aws-lc/build/goboringcrypto_linux_arm64.syso \
+  /home/builder/sdk-go/src/crypto/internal/boring/syso/goboringcrypto_linux_musl_arm64.syso
 
 COPY ./helpers/go/* ./
 
@@ -641,13 +689,21 @@ RUN ./build-go.sh --go-version=${GO123VER}
 
 FROM sdk-go-1.22-prep as sdk-go-1.22
 
-COPY --from=sdk-go-1.22-aws-lc-x86_64 \
+COPY --from=sdk-go-1.22-aws-lc-gnu-x86_64 \
   /home/builder/aws-lc/build/goboringcrypto_linux_amd64.syso \
   /home/builder/sdk-go/src/crypto/internal/boring/syso/goboringcrypto_linux_amd64.syso
 
-COPY --from=sdk-go-1.22-aws-lc-aarch64 \
+COPY --from=sdk-go-1.22-aws-lc-gnu-aarch64 \
   /home/builder/aws-lc/build/goboringcrypto_linux_arm64.syso \
   /home/builder/sdk-go/src/crypto/internal/boring/syso/goboringcrypto_linux_arm64.syso
+
+COPY --from=sdk-go-1.22-aws-lc-musl-x86_64 \
+  /home/builder/aws-lc/build/goboringcrypto_linux_amd64.syso \
+  /home/builder/sdk-go/src/crypto/internal/boring/syso/goboringcrypto_linux_musl_amd64.syso
+
+COPY --from=sdk-go-1.22-aws-lc-musl-aarch64 \
+  /home/builder/aws-lc/build/goboringcrypto_linux_arm64.syso \
+  /home/builder/sdk-go/src/crypto/internal/boring/syso/goboringcrypto_linux_musl_arm64.syso
 
 COPY ./helpers/go/* ./
 
@@ -1253,6 +1309,18 @@ COPY --chown=0:0 --from=sdk-go-1.22 \
   /home/builder/sdk-go/licenses/ \
   /usr/share/licenses/go-1.22/
 
+# Create Go trees for the different glibc and musl builds of the AWS-LC syso.
+# Sync timestamps to avoid rebuilds of the Go standard library.
+RUN \
+  for v in 1.22 1.23 ; do \
+    find /usr/libexec/go-${v} -type f -exec touch -r /usr/libexec/go-${v}/bin/go {} \+ && \
+    rsync -aq --link-dest=/usr/libexec/go-${v}/ /usr/libexec/go-${v}{,-musl}/ && \
+    rm /usr/libexec/go-${v}/src/crypto/internal/boring/syso/goboringcrypto_linux_musl_{arm,amd}64.syso && \
+    rm /usr/libexec/go-${v}-musl/src/crypto/internal/boring/syso/goboringcrypto_linux_{arm,amd}64.syso && \
+    mv /usr/libexec/go-${v}-musl/src/crypto/internal/boring/syso/goboringcrypto_linux_{musl_,}amd64.syso && \
+    mv /usr/libexec/go-${v}-musl/src/crypto/internal/boring/syso/goboringcrypto_linux_{musl_,}arm64.syso ; \
+  done
+
 # "sdk-rust-tools" has our attribution generation and license scan tools.
 COPY --chown=0:0 --from=sdk-rust-tools /usr/libexec/tools/ /usr/libexec/tools/
 COPY --chown=0:0 --from=sdk-rust-tools /usr/share/licenses/bottlerocket-license-scan/ /usr/share/licenses/bottlerocket-license-scan/
@@ -1363,11 +1431,6 @@ RUN \
 COPY ./wrappers/go/go /usr/bin/go
 COPY ./wrappers/go/gofmt /usr/bin/gofmt
 COPY ./wrappers/go/gofips /usr/bin/gofips
-
-# Add Go programs to $PATH and sync timestamps to avoid rebuilds.
-RUN \
-  find /usr/libexec/go-1.23 -type f -exec touch -r /usr/libexec/go-1.23/bin/go {} \+ && \
-  find /usr/libexec/go-1.22 -type f -exec touch -r /usr/libexec/go-1.22/bin/go {} \+
 
 # Strip and add tools to the path.
 RUN \
