@@ -1,7 +1,7 @@
-From 0094638ec77ae1de515bd2ea7e00d66ae6fd29c8 Mon Sep 17 00:00:00 2001
+From 683b82db7e49980373136e7305a6fe6f64e7a0b5 Mon Sep 17 00:00:00 2001
 From: Matthew Yeazel <yeazelm@amazon.com>
 Date: Tue, 22 Aug 2023 18:01:09 +0000
-Subject: [PATCH] Add patch series for stack protection
+Subject: [PATCH] package/gcc: Add patch series for stack protection
 
 This patchset adds additional protections against stack corruption for
 instances on aarch64 where -fstack-protector may not work as expected.
@@ -26,31 +26,31 @@ instances on aarch64 where -fstack-protector may not work as expected.
  ...Remove-below_hard_fp_saved_regs_size.patch | 157 ++++++++
  ...smash-canary-protect-saved-registers.patch | 298 +++++++++++++++
  19 files changed, 2828 insertions(+)
- create mode 100644 package/gcc/11.3.0/9001-aarch64-Use-local-frame-vars-in-shrink-wrapping-code.patch
- create mode 100644 package/gcc/11.3.0/9002-aarch64-Avoid-a-use-of-callee_offset.patch
- create mode 100644 package/gcc/11.3.0/9003-aarch64-Explicitly-handle-frames-with-no-saved-registers.patch
- create mode 100644 package/gcc/11.3.0/9004-aarch64-Add-bytes_below_saved_regs-to-frame-info.patch
- create mode 100644 package/gcc/11.3.0/9005-aarch64-Add-bytes_below_hard_fp-to-frame-info.patch
- create mode 100644 package/gcc/11.3.0/9006-aarch64-Tweak-aarch64_save-restore_callee_saves.patch
- create mode 100644 package/gcc/11.3.0/9007-aarch64-Only-calculate-chain_offset-if-there-is-a-chain.patch
- create mode 100644 package/gcc/11.3.0/9008-aarch64-Rename-locals_offset-to-bytes_above_locals.patch
- create mode 100644 package/gcc/11.3.0/9009-aarch64-Rename-hard_fp_offset-to-bytes_above_hard_fp.patch
- create mode 100644 package/gcc/11.3.0/9010-aarch64-Tweak-frame_size-comment.patch
- create mode 100644 package/gcc/11.3.0/9011-aarch64-Measure-reg_offset-from-the-bottom-of-the-frame.patch
- create mode 100644 package/gcc/11.3.0/9012-aarch64-Simplify-top-of-frame-allocation.patch
- create mode 100644 package/gcc/11.3.0/9013-aarch64-Minor-initial-adjustment-tweak.patch
- create mode 100644 package/gcc/11.3.0/9014-aarch64-Tweak-stack-clash-boundary-condition.patch
- create mode 100644 package/gcc/11.3.0/9015-aarch64-Put-LR-save-probe-in-first-16-bytes.patch
- create mode 100644 package/gcc/11.3.0/9016-aarch64-Simplify-probe-of-final-frame-allocation.patch
- create mode 100644 package/gcc/11.3.0/9017-aarch64-Explicitly-record-probe-registers-in-frame-info.patch
- create mode 100644 package/gcc/11.3.0/9018-aarch64-Remove-below_hard_fp_saved_regs_size.patch
- create mode 100644 package/gcc/11.3.0/9019-aarch64-Make-stack-smash-canary-protect-saved-registers.patch
+ create mode 100644 package/gcc/11.4.0/9001-aarch64-Use-local-frame-vars-in-shrink-wrapping-code.patch
+ create mode 100644 package/gcc/11.4.0/9002-aarch64-Avoid-a-use-of-callee_offset.patch
+ create mode 100644 package/gcc/11.4.0/9003-aarch64-Explicitly-handle-frames-with-no-saved-registers.patch
+ create mode 100644 package/gcc/11.4.0/9004-aarch64-Add-bytes_below_saved_regs-to-frame-info.patch
+ create mode 100644 package/gcc/11.4.0/9005-aarch64-Add-bytes_below_hard_fp-to-frame-info.patch
+ create mode 100644 package/gcc/11.4.0/9006-aarch64-Tweak-aarch64_save-restore_callee_saves.patch
+ create mode 100644 package/gcc/11.4.0/9007-aarch64-Only-calculate-chain_offset-if-there-is-a-chain.patch
+ create mode 100644 package/gcc/11.4.0/9008-aarch64-Rename-locals_offset-to-bytes_above_locals.patch
+ create mode 100644 package/gcc/11.4.0/9009-aarch64-Rename-hard_fp_offset-to-bytes_above_hard_fp.patch
+ create mode 100644 package/gcc/11.4.0/9010-aarch64-Tweak-frame_size-comment.patch
+ create mode 100644 package/gcc/11.4.0/9011-aarch64-Measure-reg_offset-from-the-bottom-of-the-frame.patch
+ create mode 100644 package/gcc/11.4.0/9012-aarch64-Simplify-top-of-frame-allocation.patch
+ create mode 100644 package/gcc/11.4.0/9013-aarch64-Minor-initial-adjustment-tweak.patch
+ create mode 100644 package/gcc/11.4.0/9014-aarch64-Tweak-stack-clash-boundary-condition.patch
+ create mode 100644 package/gcc/11.4.0/9015-aarch64-Put-LR-save-probe-in-first-16-bytes.patch
+ create mode 100644 package/gcc/11.4.0/9016-aarch64-Simplify-probe-of-final-frame-allocation.patch
+ create mode 100644 package/gcc/11.4.0/9017-aarch64-Explicitly-record-probe-registers-in-frame-info.patch
+ create mode 100644 package/gcc/11.4.0/9018-aarch64-Remove-below_hard_fp_saved_regs_size.patch
+ create mode 100644 package/gcc/11.4.0/9019-aarch64-Make-stack-smash-canary-protect-saved-registers.patch
 
-diff --git a/package/gcc/11.3.0/9001-aarch64-Use-local-frame-vars-in-shrink-wrapping-code.patch b/package/gcc/11.3.0/9001-aarch64-Use-local-frame-vars-in-shrink-wrapping-code.patch
+diff --git a/package/gcc/11.4.0/9001-aarch64-Use-local-frame-vars-in-shrink-wrapping-code.patch b/package/gcc/11.4.0/9001-aarch64-Use-local-frame-vars-in-shrink-wrapping-code.patch
 new file mode 100644
 index 0000000000..0e5417ae33
 --- /dev/null
-+++ b/package/gcc/11.3.0/9001-aarch64-Use-local-frame-vars-in-shrink-wrapping-code.patch
++++ b/package/gcc/11.4.0/9001-aarch64-Use-local-frame-vars-in-shrink-wrapping-code.patch
 @@ -0,0 +1,349 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 01/19] aarch64: Use local frame vars in shrink-wrapping code
@@ -401,11 +401,11 @@ index 0000000000..0e5417ae33
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9002-aarch64-Avoid-a-use-of-callee_offset.patch b/package/gcc/11.3.0/9002-aarch64-Avoid-a-use-of-callee_offset.patch
+diff --git a/package/gcc/11.4.0/9002-aarch64-Avoid-a-use-of-callee_offset.patch b/package/gcc/11.4.0/9002-aarch64-Avoid-a-use-of-callee_offset.patch
 new file mode 100644
 index 0000000000..e296cbc26d
 --- /dev/null
-+++ b/package/gcc/11.3.0/9002-aarch64-Avoid-a-use-of-callee_offset.patch
++++ b/package/gcc/11.4.0/9002-aarch64-Avoid-a-use-of-callee_offset.patch
 @@ -0,0 +1,73 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 02/19] aarch64: Avoid a use of callee_offset
@@ -480,11 +480,11 @@ index 0000000000..e296cbc26d
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9003-aarch64-Explicitly-handle-frames-with-no-saved-registers.patch b/package/gcc/11.3.0/9003-aarch64-Explicitly-handle-frames-with-no-saved-registers.patch
+diff --git a/package/gcc/11.4.0/9003-aarch64-Explicitly-handle-frames-with-no-saved-registers.patch b/package/gcc/11.4.0/9003-aarch64-Explicitly-handle-frames-with-no-saved-registers.patch
 new file mode 100644
 index 0000000000..27d9ce8e2b
 --- /dev/null
-+++ b/package/gcc/11.3.0/9003-aarch64-Explicitly-handle-frames-with-no-saved-registers.patch
++++ b/package/gcc/11.4.0/9003-aarch64-Explicitly-handle-frames-with-no-saved-registers.patch
 @@ -0,0 +1,49 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 03/19] aarch64: Explicitly handle frames with no saved
@@ -535,11 +535,11 @@ index 0000000000..27d9ce8e2b
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9004-aarch64-Add-bytes_below_saved_regs-to-frame-info.patch b/package/gcc/11.3.0/9004-aarch64-Add-bytes_below_saved_regs-to-frame-info.patch
+diff --git a/package/gcc/11.4.0/9004-aarch64-Add-bytes_below_saved_regs-to-frame-info.patch b/package/gcc/11.4.0/9004-aarch64-Add-bytes_below_saved_regs-to-frame-info.patch
 new file mode 100644
 index 0000000000..f8d23094db
 --- /dev/null
-+++ b/package/gcc/11.3.0/9004-aarch64-Add-bytes_below_saved_regs-to-frame-info.patch
++++ b/package/gcc/11.4.0/9004-aarch64-Add-bytes_below_saved_regs-to-frame-info.patch
 @@ -0,0 +1,233 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 04/19] aarch64: Add bytes_below_saved_regs to frame info
@@ -774,11 +774,11 @@ index 0000000000..f8d23094db
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9005-aarch64-Add-bytes_below_hard_fp-to-frame-info.patch b/package/gcc/11.3.0/9005-aarch64-Add-bytes_below_hard_fp-to-frame-info.patch
+diff --git a/package/gcc/11.4.0/9005-aarch64-Add-bytes_below_hard_fp-to-frame-info.patch b/package/gcc/11.4.0/9005-aarch64-Add-bytes_below_hard_fp-to-frame-info.patch
 new file mode 100644
 index 0000000000..7194951cd3
 --- /dev/null
-+++ b/package/gcc/11.3.0/9005-aarch64-Add-bytes_below_hard_fp-to-frame-info.patch
++++ b/package/gcc/11.4.0/9005-aarch64-Add-bytes_below_hard_fp-to-frame-info.patch
 @@ -0,0 +1,84 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 05/19] aarch64: Add bytes_below_hard_fp to frame info
@@ -864,11 +864,11 @@ index 0000000000..7194951cd3
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9006-aarch64-Tweak-aarch64_save-restore_callee_saves.patch b/package/gcc/11.3.0/9006-aarch64-Tweak-aarch64_save-restore_callee_saves.patch
+diff --git a/package/gcc/11.4.0/9006-aarch64-Tweak-aarch64_save-restore_callee_saves.patch b/package/gcc/11.4.0/9006-aarch64-Tweak-aarch64_save-restore_callee_saves.patch
 new file mode 100644
 index 0000000000..0c530932d0
 --- /dev/null
-+++ b/package/gcc/11.3.0/9006-aarch64-Tweak-aarch64_save-restore_callee_saves.patch
++++ b/package/gcc/11.4.0/9006-aarch64-Tweak-aarch64_save-restore_callee_saves.patch
 @@ -0,0 +1,221 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 06/19] aarch64: Tweak aarch64_save/restore_callee_saves
@@ -1091,11 +1091,11 @@ index 0000000000..0c530932d0
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9007-aarch64-Only-calculate-chain_offset-if-there-is-a-chain.patch b/package/gcc/11.3.0/9007-aarch64-Only-calculate-chain_offset-if-there-is-a-chain.patch
+diff --git a/package/gcc/11.4.0/9007-aarch64-Only-calculate-chain_offset-if-there-is-a-chain.patch b/package/gcc/11.4.0/9007-aarch64-Only-calculate-chain_offset-if-there-is-a-chain.patch
 new file mode 100644
 index 0000000000..0f87966416
 --- /dev/null
-+++ b/package/gcc/11.3.0/9007-aarch64-Only-calculate-chain_offset-if-there-is-a-chain.patch
++++ b/package/gcc/11.4.0/9007-aarch64-Only-calculate-chain_offset-if-there-is-a-chain.patch
 @@ -0,0 +1,45 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 07/19] aarch64: Only calculate chain_offset if there is a
@@ -1142,11 +1142,11 @@ index 0000000000..0f87966416
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9008-aarch64-Rename-locals_offset-to-bytes_above_locals.patch b/package/gcc/11.3.0/9008-aarch64-Rename-locals_offset-to-bytes_above_locals.patch
+diff --git a/package/gcc/11.4.0/9008-aarch64-Rename-locals_offset-to-bytes_above_locals.patch b/package/gcc/11.4.0/9008-aarch64-Rename-locals_offset-to-bytes_above_locals.patch
 new file mode 100644
 index 0000000000..2eca99fff7
 --- /dev/null
-+++ b/package/gcc/11.3.0/9008-aarch64-Rename-locals_offset-to-bytes_above_locals.patch
++++ b/package/gcc/11.4.0/9008-aarch64-Rename-locals_offset-to-bytes_above_locals.patch
 @@ -0,0 +1,89 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 08/19] aarch64: Rename locals_offset to bytes_above_locals
@@ -1237,11 +1237,11 @@ index 0000000000..2eca99fff7
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9009-aarch64-Rename-hard_fp_offset-to-bytes_above_hard_fp.patch b/package/gcc/11.3.0/9009-aarch64-Rename-hard_fp_offset-to-bytes_above_hard_fp.patch
+diff --git a/package/gcc/11.4.0/9009-aarch64-Rename-hard_fp_offset-to-bytes_above_hard_fp.patch b/package/gcc/11.4.0/9009-aarch64-Rename-hard_fp_offset-to-bytes_above_hard_fp.patch
 new file mode 100644
 index 0000000000..bc33c4e66d
 --- /dev/null
-+++ b/package/gcc/11.3.0/9009-aarch64-Rename-hard_fp_offset-to-bytes_above_hard_fp.patch
++++ b/package/gcc/11.4.0/9009-aarch64-Rename-hard_fp_offset-to-bytes_above_hard_fp.patch
 @@ -0,0 +1,146 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 09/19] aarch64: Rename hard_fp_offset to bytes_above_hard_fp
@@ -1389,11 +1389,11 @@ index 0000000000..bc33c4e66d
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9010-aarch64-Tweak-frame_size-comment.patch b/package/gcc/11.3.0/9010-aarch64-Tweak-frame_size-comment.patch
+diff --git a/package/gcc/11.4.0/9010-aarch64-Tweak-frame_size-comment.patch b/package/gcc/11.4.0/9010-aarch64-Tweak-frame_size-comment.patch
 new file mode 100644
 index 0000000000..d4df4a3e28
 --- /dev/null
-+++ b/package/gcc/11.3.0/9010-aarch64-Tweak-frame_size-comment.patch
++++ b/package/gcc/11.4.0/9010-aarch64-Tweak-frame_size-comment.patch
 @@ -0,0 +1,33 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 10/19] aarch64: Tweak frame_size comment
@@ -1428,11 +1428,11 @@ index 0000000000..d4df4a3e28
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9011-aarch64-Measure-reg_offset-from-the-bottom-of-the-frame.patch b/package/gcc/11.3.0/9011-aarch64-Measure-reg_offset-from-the-bottom-of-the-frame.patch
+diff --git a/package/gcc/11.4.0/9011-aarch64-Measure-reg_offset-from-the-bottom-of-the-frame.patch b/package/gcc/11.4.0/9011-aarch64-Measure-reg_offset-from-the-bottom-of-the-frame.patch
 new file mode 100644
 index 0000000000..23099e4ef2
 --- /dev/null
-+++ b/package/gcc/11.3.0/9011-aarch64-Measure-reg_offset-from-the-bottom-of-the-frame.patch
++++ b/package/gcc/11.4.0/9011-aarch64-Measure-reg_offset-from-the-bottom-of-the-frame.patch
 @@ -0,0 +1,196 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 11/19] aarch64: Measure reg_offset from the bottom of the
@@ -1630,11 +1630,11 @@ index 0000000000..23099e4ef2
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9012-aarch64-Simplify-top-of-frame-allocation.patch b/package/gcc/11.3.0/9012-aarch64-Simplify-top-of-frame-allocation.patch
+diff --git a/package/gcc/11.4.0/9012-aarch64-Simplify-top-of-frame-allocation.patch b/package/gcc/11.4.0/9012-aarch64-Simplify-top-of-frame-allocation.patch
 new file mode 100644
 index 0000000000..6f7b6e2c16
 --- /dev/null
-+++ b/package/gcc/11.3.0/9012-aarch64-Simplify-top-of-frame-allocation.patch
++++ b/package/gcc/11.4.0/9012-aarch64-Simplify-top-of-frame-allocation.patch
 @@ -0,0 +1,55 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 12/19] aarch64: Simplify top of frame allocation
@@ -1691,11 +1691,11 @@ index 0000000000..6f7b6e2c16
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9013-aarch64-Minor-initial-adjustment-tweak.patch b/package/gcc/11.3.0/9013-aarch64-Minor-initial-adjustment-tweak.patch
+diff --git a/package/gcc/11.4.0/9013-aarch64-Minor-initial-adjustment-tweak.patch b/package/gcc/11.4.0/9013-aarch64-Minor-initial-adjustment-tweak.patch
 new file mode 100644
 index 0000000000..2ddbc4071f
 --- /dev/null
-+++ b/package/gcc/11.3.0/9013-aarch64-Minor-initial-adjustment-tweak.patch
++++ b/package/gcc/11.4.0/9013-aarch64-Minor-initial-adjustment-tweak.patch
 @@ -0,0 +1,38 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 13/19] aarch64: Minor initial adjustment tweak
@@ -1735,11 +1735,11 @@ index 0000000000..2ddbc4071f
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9014-aarch64-Tweak-stack-clash-boundary-condition.patch b/package/gcc/11.3.0/9014-aarch64-Tweak-stack-clash-boundary-condition.patch
+diff --git a/package/gcc/11.4.0/9014-aarch64-Tweak-stack-clash-boundary-condition.patch b/package/gcc/11.4.0/9014-aarch64-Tweak-stack-clash-boundary-condition.patch
 new file mode 100644
 index 0000000000..d47f9283d6
 --- /dev/null
-+++ b/package/gcc/11.3.0/9014-aarch64-Tweak-stack-clash-boundary-condition.patch
++++ b/package/gcc/11.4.0/9014-aarch64-Tweak-stack-clash-boundary-condition.patch
 @@ -0,0 +1,125 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 14/19] aarch64: Tweak stack clash boundary condition
@@ -1866,11 +1866,11 @@ index 0000000000..d47f9283d6
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9015-aarch64-Put-LR-save-probe-in-first-16-bytes.patch b/package/gcc/11.3.0/9015-aarch64-Put-LR-save-probe-in-first-16-bytes.patch
+diff --git a/package/gcc/11.4.0/9015-aarch64-Put-LR-save-probe-in-first-16-bytes.patch b/package/gcc/11.4.0/9015-aarch64-Put-LR-save-probe-in-first-16-bytes.patch
 new file mode 100644
 index 0000000000..6626a3473f
 --- /dev/null
-+++ b/package/gcc/11.3.0/9015-aarch64-Put-LR-save-probe-in-first-16-bytes.patch
++++ b/package/gcc/11.4.0/9015-aarch64-Put-LR-save-probe-in-first-16-bytes.patch
 @@ -0,0 +1,263 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 15/19] aarch64: Put LR save probe in first 16 bytes
@@ -2135,11 +2135,11 @@ index 0000000000..6626a3473f
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9016-aarch64-Simplify-probe-of-final-frame-allocation.patch b/package/gcc/11.3.0/9016-aarch64-Simplify-probe-of-final-frame-allocation.patch
+diff --git a/package/gcc/11.4.0/9016-aarch64-Simplify-probe-of-final-frame-allocation.patch b/package/gcc/11.4.0/9016-aarch64-Simplify-probe-of-final-frame-allocation.patch
 new file mode 100644
 index 0000000000..3daa4502b0
 --- /dev/null
-+++ b/package/gcc/11.3.0/9016-aarch64-Simplify-probe-of-final-frame-allocation.patch
++++ b/package/gcc/11.4.0/9016-aarch64-Simplify-probe-of-final-frame-allocation.patch
 @@ -0,0 +1,99 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 16/19] aarch64: Simplify probe of final frame allocation
@@ -2240,11 +2240,11 @@ index 0000000000..3daa4502b0
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9017-aarch64-Explicitly-record-probe-registers-in-frame-info.patch b/package/gcc/11.3.0/9017-aarch64-Explicitly-record-probe-registers-in-frame-info.patch
+diff --git a/package/gcc/11.4.0/9017-aarch64-Explicitly-record-probe-registers-in-frame-info.patch b/package/gcc/11.4.0/9017-aarch64-Explicitly-record-probe-registers-in-frame-info.patch
 new file mode 100644
 index 0000000000..1e25b86efe
 --- /dev/null
-+++ b/package/gcc/11.3.0/9017-aarch64-Explicitly-record-probe-registers-in-frame-info.patch
++++ b/package/gcc/11.4.0/9017-aarch64-Explicitly-record-probe-registers-in-frame-info.patch
 @@ -0,0 +1,275 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 17/19] aarch64: Explicitly record probe registers in frame
@@ -2521,11 +2521,11 @@ index 0000000000..1e25b86efe
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9018-aarch64-Remove-below_hard_fp_saved_regs_size.patch b/package/gcc/11.3.0/9018-aarch64-Remove-below_hard_fp_saved_regs_size.patch
+diff --git a/package/gcc/11.4.0/9018-aarch64-Remove-below_hard_fp_saved_regs_size.patch b/package/gcc/11.4.0/9018-aarch64-Remove-below_hard_fp_saved_regs_size.patch
 new file mode 100644
 index 0000000000..d5ab90340d
 --- /dev/null
-+++ b/package/gcc/11.3.0/9018-aarch64-Remove-below_hard_fp_saved_regs_size.patch
++++ b/package/gcc/11.4.0/9018-aarch64-Remove-below_hard_fp_saved_regs_size.patch
 @@ -0,0 +1,157 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 18/19] aarch64: Remove below_hard_fp_saved_regs_size
@@ -2684,11 +2684,11 @@ index 0000000000..d5ab90340d
 +2.25.1
 +
 +
-diff --git a/package/gcc/11.3.0/9019-aarch64-Make-stack-smash-canary-protect-saved-registers.patch b/package/gcc/11.3.0/9019-aarch64-Make-stack-smash-canary-protect-saved-registers.patch
+diff --git a/package/gcc/11.4.0/9019-aarch64-Make-stack-smash-canary-protect-saved-registers.patch b/package/gcc/11.4.0/9019-aarch64-Make-stack-smash-canary-protect-saved-registers.patch
 new file mode 100644
 index 0000000000..33866e8afd
 --- /dev/null
-+++ b/package/gcc/11.3.0/9019-aarch64-Make-stack-smash-canary-protect-saved-registers.patch
++++ b/package/gcc/11.4.0/9019-aarch64-Make-stack-smash-canary-protect-saved-registers.patch
 @@ -0,0 +1,298 @@
 +From: Richard Sandiford <richard.sandiford@arm.com>
 +Subject: [PATCH 19/19] aarch64: Make stack smash canary protect saved
@@ -2989,5 +2989,5 @@ index 0000000000..33866e8afd
 +2.25.1
 +
 -- 
-2.41.0
+2.47.0
 

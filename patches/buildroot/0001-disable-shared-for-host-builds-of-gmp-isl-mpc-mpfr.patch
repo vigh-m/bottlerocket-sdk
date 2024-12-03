@@ -1,4 +1,4 @@
-From 9e6d1c176a007d6751e3acd02f96becee48ef361 Mon Sep 17 00:00:00 2001
+From 361bce2ecf6949005bf34dd82fc3d9e84ecca932 Mon Sep 17 00:00:00 2001
 From: Ben Cressey <bcressey@amazon.com>
 Date: Sun, 6 Aug 2017 23:15:02 +0000
 Subject: [PATCH] disable shared for host builds of gmp, isl, mpc, mpfr
@@ -17,10 +17,10 @@ Signed-off-by: Ben Cressey <bcressey@amazon.com>
  5 files changed, 17 insertions(+), 1 deletion(-)
 
 diff --git a/package/Makefile.in b/package/Makefile.in
-index 43d214bcbe..3e9036b96f 100644
+index d610a28925..174c4b0920 100644
 --- a/package/Makefile.in
 +++ b/package/Makefile.in
-@@ -243,7 +243,7 @@ HOST_CPPFLAGS  = -I$(HOST_DIR)/include
+@@ -250,7 +250,7 @@ HOST_CPPFLAGS  = -I$(HOST_DIR)/include
  HOST_CFLAGS   ?= -O2
  HOST_CFLAGS   += $(HOST_CPPFLAGS)
  HOST_CXXFLAGS += $(HOST_CFLAGS)
@@ -30,22 +30,22 @@ index 43d214bcbe..3e9036b96f 100644
  # host-intltool should be executed with the system perl, so we save
  # the path to the system perl, before a host-perl built by Buildroot
 diff --git a/package/gmp/gmp.mk b/package/gmp/gmp.mk
-index 9b402767fd..fe7cf05d8e 100644
+index 7e8da9025c..db2b90c50f 100644
 --- a/package/gmp/gmp.mk
 +++ b/package/gmp/gmp.mk
-@@ -14,6 +14,10 @@ GMP_CPE_ID_VENDOR = gmplib
- GMP_DEPENDENCIES = host-m4
- HOST_GMP_DEPENDENCIES = host-m4
+@@ -16,6 +16,10 @@ HOST_GMP_DEPENDENCIES = host-m4
+ 
+ GMP_CONF_ENV += CC_FOR_BUILD="$(HOSTCC) -std=c99"
  
 +HOST_GMP_CONF_OPTS = \
 +	--enable-static \
 +	--disable-shared
 +
- # 0001-mpz-inp_raw.c-Avoid-bit-size-overflows.patch
- GMP_IGNORE_CVES += CVE-2021-43618
- 
+ # GMP doesn't support assembly for coldfire or mips r6 ISA yet
+ # Disable for ARM v7m since it has different asm constraints
+ ifeq ($(BR2_m68k_cf)$(BR2_MIPS_CPU_MIPS32R6)$(BR2_MIPS_CPU_MIPS64R6)$(BR2_ARM_CPU_ARMV7M),y)
 diff --git a/package/isl/isl.mk b/package/isl/isl.mk
-index ce9aaecebc..883bf3a830 100644
+index 42830a2689..9cba0e06d6 100644
 --- a/package/isl/isl.mk
 +++ b/package/isl/isl.mk
 @@ -11,4 +11,8 @@ ISL_LICENSE = MIT
@@ -72,10 +72,10 @@ index 364e4c3c85..2a93394a39 100644
  $(eval $(autotools-package))
  $(eval $(host-autotools-package))
 diff --git a/package/mpfr/mpfr.mk b/package/mpfr/mpfr.mk
-index cd558dae0e..74080ec884 100644
+index c0c8c04646..d827cbfc3b 100644
 --- a/package/mpfr/mpfr.mk
 +++ b/package/mpfr/mpfr.mk
-@@ -15,5 +15,9 @@ MPFR_DEPENDENCIES = gmp
+@@ -16,5 +16,9 @@ MPFR_DEPENDENCIES = gmp
  HOST_MPFR_DEPENDENCIES = host-gmp
  MPFR_MAKE_OPTS = RANLIB=$(TARGET_RANLIB)
  
@@ -86,5 +86,5 @@ index cd558dae0e..74080ec884 100644
  $(eval $(autotools-package))
  $(eval $(host-autotools-package))
 -- 
-2.37.2
+2.47.0
 

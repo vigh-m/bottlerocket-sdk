@@ -1,21 +1,21 @@
-From a6df7ffb2d109177a97bf6e9da08028c17f2bcc7 Mon Sep 17 00:00:00 2001
+From dafc983171b5124f1081ae13e6f57ce6af7678e7 Mon Sep 17 00:00:00 2001
 From: Ben Cressey <bcressey@amazon.com>
 Date: Fri, 15 Mar 2019 18:32:49 +0000
-Subject: [PATCH] package/binutils: bring back sysroot fix for 2.38
+Subject: [PATCH] package/binutils: bring back sysroot fix for 2.41
 
 Signed-off-by: Ben Cressey <bcressey@amazon.com>
 ---
  .../9001-add-sysroot-fix-from-bug-3049.patch  | 53 +++++++++++++++++++
  1 file changed, 53 insertions(+)
- create mode 100644 package/binutils/2.38/9001-add-sysroot-fix-from-bug-3049.patch
+ create mode 100644 package/binutils/2.41/9001-add-sysroot-fix-from-bug-3049.patch
 
-diff --git a/package/binutils/2.38/9001-add-sysroot-fix-from-bug-3049.patch b/package/binutils/2.38/9001-add-sysroot-fix-from-bug-3049.patch
+diff --git a/package/binutils/2.41/9001-add-sysroot-fix-from-bug-3049.patch b/package/binutils/2.41/9001-add-sysroot-fix-from-bug-3049.patch
 new file mode 100644
-index 0000000000..7674fa3ad9
+index 0000000000..c59a27a2b0
 --- /dev/null
-+++ b/package/binutils/2.38/9001-add-sysroot-fix-from-bug-3049.patch
++++ b/package/binutils/2.41/9001-add-sysroot-fix-from-bug-3049.patch
 @@ -0,0 +1,53 @@
-+From dc372679aa22f0a5341891924ccfce1e64537fd6 Mon Sep 17 00:00:00 2001
++From 297ab337624a6b51c9e4fdfcceb2edaa01175a6e Mon Sep 17 00:00:00 2001
 +From: Romain Naour <romain.naour@gmail.com>
 +Date: Fri, 25 Dec 2015 11:42:48 +0100
 +Subject: [PATCH] add sysroot fix from bug #3049
@@ -35,7 +35,7 @@ index 0000000000..7674fa3ad9
 + 1 file changed, 8 insertions(+), 2 deletions(-)
 +
 +diff --git a/ld/ldfile.c b/ld/ldfile.c
-+index 731ae5f7aed..7fda926c03c 100644
++index 731ae5f7..7fda926c 100644
 +--- a/ld/ldfile.c
 ++++ b/ld/ldfile.c
 +@@ -340,18 +340,24 @@ ldfile_open_file_search (const char *arch,
@@ -66,8 +66,8 @@ index 0000000000..7674fa3ad9
 + 
 +       if (IS_ABSOLUTE_PATH (entry->filename))
 +-- 
-+2.36.1
++2.47.0
 +
 -- 
-2.37.2
+2.47.0
 
