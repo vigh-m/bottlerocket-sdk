@@ -1,6 +1,6 @@
 #![deny(rust_2018_idioms)]
 #![warn(clippy::pedantic)]
-#![allow(clippy::redundant_closure_for_method_calls)]
+#![expect(clippy::needless_lifetimes)]
 
 use anyhow::{anyhow, bail, ensure, Context, Result};
 use askalono::{ScanStrategy, Store, TextData};
