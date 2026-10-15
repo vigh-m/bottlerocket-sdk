@@ -541,6 +541,7 @@ WORKDIR /home/builder/sdk-go
 
 COPY ./hashes/go-${GOMAJOR} /home/builder/hashes-go
 COPY ./helpers/go/prep-go.sh ./
+COPY ./patches/go-${GOMAJOR} /home/builder/patches-go
 
 RUN ./prep-go.sh --go-version=${GO127VER}
 

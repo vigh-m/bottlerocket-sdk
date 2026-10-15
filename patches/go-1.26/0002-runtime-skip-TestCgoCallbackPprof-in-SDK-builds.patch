@@ -1,0 +1,30 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Bottlerocket SDK <bottlerocket@amazon.com>
+Date: Thu, 15 Oct 2026 11:29:28 -0700
+Subject: [PATCH] runtime: skip TestCgoCallbackPprof in SDK builds
+
+The test takes a CPU profile for about one second and expects a sample
+in a specific cgo callback. It fails intermittently on a loaded build
+host, for example when the Go and Rust SDK stages build in parallel, and
+then fails the whole SDK build through all.bash.
+
+Signed-off-by: Vighnesh Maheshwari <vighmah@amazon.com>
+---
+ src/runtime/crash_cgo_test.go | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/runtime/crash_cgo_test.go b/src/runtime/crash_cgo_test.go
+index baf4523..1ade5c5 100644
+--- a/src/runtime/crash_cgo_test.go
++++ b/src/runtime/crash_cgo_test.go
+@@ -85,6 +85,10 @@ func TestCgoCallbackGC(t *testing.T) {
+ }
+ 
+ func TestCgoCallbackPprof(t *testing.T) {
++	// Bottlerocket: this test samples a CPU profile for about one second and
++	// expects a sample in a specific callback. It fails intermittently when
++	// the SDK build runs other heavy stages on the same host.
++	t.Skip("skipping timing-sensitive test in the Bottlerocket SDK build")
+ 	t.Parallel()
+ 	switch runtime.GOOS {
+ 	case "plan9", "windows":
